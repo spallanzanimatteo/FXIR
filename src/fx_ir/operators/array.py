@@ -5,26 +5,26 @@ import torch.nn as nn
 
 
 class Array(nn.Module):
-    """An operator producing a singleton array collection."""
+    """Extract an array from an array sequence."""
 
     def __init__(self, index: int) -> None:
         """Initialize the operation.
 
         Args:
-            index: The position of the array in the collection.
+            index: The position of the array in the sequence.
 
         """
         super().__init__()
         self.index = index
 
-    def forward(self, collection: Tuple[torch.Tensor, ...]) -> Tuple[torch.Tensor]:
-        """Extract a singleton from an array collection.
+    def forward(self, collection: Tuple[torch.Tensor, ...]) -> torch.Tensor:
+        """Extract an array from an array sequence.
 
         Args:
-            collection: A collection of arrays.
+            collection: An array sequence.
 
         Returns:
-            A singleton array collection.
+            An array.
 
         """
-        return collection[self.index],
+        return collection[self.index]

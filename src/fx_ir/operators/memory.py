@@ -17,7 +17,7 @@ class Concat(nn.Module):
         super().__init__()
         self.dim = dim
 
-    def forward(self, x0: Tuple[torch.Tensor], x1: Tuple[torch.Tensor]) -> Tuple[torch.Tensor]:
+    def forward(self, x0: torch.Tensor, x1: torch.Tensor) -> Tuple[torch.Tensor]:
         """Concatenate two arrays along a given axis.
 
         Args:
@@ -25,10 +25,11 @@ class Concat(nn.Module):
             x1: Another array.
 
         Returns:
-            The concatenation of the arrays.
+            A sequence of arrays. The arrays have the following semantics:
+                * the concatenation of the arrays.
 
         """
-        return torch.cat((*x0, *x1), dim=self.dim),
+        return torch.cat((x0, x1), dim=self.dim),
 
 
 class Split(nn.Module):
@@ -46,14 +47,16 @@ class Split(nn.Module):
         self.dim = dim
         self.block_sizes = block_sizes
 
-    def forward(self, x: Tuple[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Split an array into two blocks along a given axis.
 
         Args:
             x: An array.
 
         Returns:
-            The two blocks.
+            A sequence of arrays. The arrays have the following semantics:
+                * the first block of the array along the given axis;
+                * the second block of the array along the given axis.
 
         """
-        return cast(Tuple[torch.Tensor, torch.Tensor], torch.split(*x, dim=self.dim, split_size_or_sections=cast(List[int], self.block_sizes)))
+        return cast(Tuple[torch.Tensor, torch.Tensor], torch.split(x, dim=self.dim, split_size_or_sections=cast(List[int], self.block_sizes)))

@@ -15,10 +15,10 @@ FX IR enforces the following **invariants** on a `Graph`.
    * the `"output"` node represents the collection of model outputs.
 3. **`Array` nodes**. A `"call_module"` node representing an individual `Tensor`, with the following signature:
    * consume a tuple of `Tensor`s;
-   * produce a 1-tuple of `Tensor`s (i.e., a container with a single `Tensor`).
+   * produce a single `Tensor`.
 4. **Non-`Array` nodes**. A `"call_module"` node representing an operation, with the following signature:
-     * consume one or more 1-tuples of `Tensor`s (each 1-tuple being an input);
-     * produce a tuple of `Tensor`s (each `Tensor` being an output).
+     * consume one or more `Tensor`s;
+     * produce a tuple of `Tensor`s.
 
 Thanks to the invariants, users of the FX IR can make the following **assumptions**.
 * Every operation is represented as a non-`Array` `"call_module"` node.

@@ -7,7 +7,7 @@ import torch.nn as nn
 class Add(nn.Module):
     """Add two arrays, elementwise."""
 
-    def forward(self, x0: Tuple[torch.Tensor], x1: Tuple[torch.Tensor]) -> Tuple[torch.Tensor]:
+    def forward(self, x0: torch.Tensor, x1: torch.Tensor) -> Tuple[torch.Tensor]:
         """Add two arrays, elementwise.
 
         Args:
@@ -15,16 +15,17 @@ class Add(nn.Module):
             x1: Another array.
 
         Returns:
-            The elementwise sum of the arrays.
+            A sequence of arrays. The arrays have the following semantics:
+                * the elementwise sum of the arrays.
 
         """
-        return torch.add(*x0, *x1),
+        return torch.add(x0, x1),
 
 
 class Mul(nn.Module):
     """Multiply two arrays, elementwise."""
 
-    def forward(self, x0: Tuple[torch.Tensor], x1: Tuple[torch.Tensor]) -> Tuple[torch.Tensor]:
+    def forward(self, x0: torch.Tensor, x1: torch.Tensor) -> Tuple[torch.Tensor]:
         """Multiply two arrays, elementwise.
 
         Args:
@@ -32,7 +33,8 @@ class Mul(nn.Module):
             x1: Another array.
 
         Returns:
-            The elementwise product of the arrays.
+            A sequence of arrays. The arrays have the following semantics:
+                * the elementwise product of the arrays.
 
         """
-        return torch.mul(*x0, *x1),
+        return torch.mul(x0, x1),

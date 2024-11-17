@@ -91,7 +91,7 @@ def main():
     validator.validate(model)
     actual_outputs = model(inputs)
     expected_outputs = _create_expected_outputs(block_sizes)
-    assert all(torch.equal(a, e) for (a,), e in zip(actual_outputs, expected_outputs))
+    assert all(torch.equal(a, e) for a, e in zip(actual_outputs, expected_outputs))
 
 
 if __name__ == "__main__":
