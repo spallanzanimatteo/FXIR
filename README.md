@@ -1,7 +1,7 @@
 # FX Intermediate Representation
 
 The FX Intermediate Representation (FX IR) is a specialized dialect of PyTorch's [FX](https://pytorch.org/docs/stable/fx.html) intermediate representation.
-FX IR **reduces the ambiguities inherent to the original intermediate representation, facilitating the application of compiler algorithms** such as graph analysis and transformation.
+FX IR **reduces the ambiguities inherent to the original intermediate representation, facilitating the application of compiler algorithms** such as static analysis and graph rewriting.
 
 ## How does the FX IR work?
 
