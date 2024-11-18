@@ -19,7 +19,8 @@ class Add(nn.Module):
                 * the elementwise sum of the arrays.
 
         """
-        return torch.add(x0, x1),
+        ys = torch.add(x0, x1),
+        return ys
 
 
 class Mul(nn.Module):
@@ -37,4 +38,5 @@ class Mul(nn.Module):
                 * the elementwise product of the arrays.
 
         """
-        return torch.mul(x0, x1),
+        ys = torch.mul(x0, x1),
+        return ys

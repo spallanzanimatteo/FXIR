@@ -18,4 +18,5 @@ class ReLU(nn.ReLU):
                 * the ReLU-activated array.
 
         """
-        return super().forward(x),
+        ys = super().forward(x),
+        return ys

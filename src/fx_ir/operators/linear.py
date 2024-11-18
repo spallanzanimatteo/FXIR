@@ -18,4 +18,5 @@ class Linear(nn.Linear):
                 * the affine-transformed array.
 
         """
-        return super().forward(x),
+        ys = super().forward(x),
+        return ys

@@ -17,14 +17,15 @@ class Array(nn.Module):
         super().__init__()
         self.index = index
 
-    def forward(self, collection: Tuple[torch.Tensor, ...]) -> torch.Tensor:
+    def forward(self, ys: Tuple[torch.Tensor, ...]) -> torch.Tensor:
         """Extract an array from an array sequence.
 
         Args:
-            collection: An array sequence.
+            ys: An array sequence.
 
         Returns:
             An array.
 
         """
-        return collection[self.index]
+        x = ys[self.index]
+        return x

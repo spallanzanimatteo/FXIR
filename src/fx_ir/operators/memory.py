@@ -29,7 +29,8 @@ class Concat(nn.Module):
                 * the concatenation of the arrays.
 
         """
-        return torch.cat((x0, x1), dim=self.dim),
+        ys = torch.cat((x0, x1), dim=self.dim),
+        return ys
 
 
 class Split(nn.Module):
@@ -59,4 +60,5 @@ class Split(nn.Module):
                 * the second block of the array along the given axis.
 
         """
-        return cast(Tuple[torch.Tensor, torch.Tensor], torch.split(x, dim=self.dim, split_size_or_sections=cast(List[int], self.block_sizes)))
+        ys = cast(Tuple[torch.Tensor, torch.Tensor], torch.split(x, dim=self.dim, split_size_or_sections=cast(List[int], self.block_sizes)))
+        return ys
