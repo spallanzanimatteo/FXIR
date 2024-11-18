@@ -1,1 +1,1 @@
-from fx_ir import operators, validator
+from fx_ir import editor, operators, validator
