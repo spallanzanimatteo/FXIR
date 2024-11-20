@@ -1,1 +1,1 @@
-from fx_ir.validator.validate import validate
+from fx_ir.validator.validator import VALIDATOR

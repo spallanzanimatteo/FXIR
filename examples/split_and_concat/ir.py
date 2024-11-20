@@ -88,7 +88,7 @@ def main():
     """Create an FX IR model with a collection of inputs, validate the model, then apply it to the inputs."""
     block_sizes = (2**3, 2**4)
     model, inputs = create_model_and_inputs(block_sizes)
-    validator.validate(model)
+    validator.VALIDATOR.validate(model)
     actual_outputs = model(inputs)
     expected_outputs = _create_expected_outputs(block_sizes)
     assert all(torch.equal(a, e) for a, e in zip(actual_outputs, expected_outputs))
