@@ -33,6 +33,36 @@ class Concat(nn.Module):
         return ys
 
 
+class Flatten(nn.Module):
+    """Remove a range of contiguous axes from an array."""
+
+    def __init__(self, dim_start: int, dim_end: int) -> None:
+        """Initialize the operation.
+
+        Args:
+            dim_start: The identifier of the first axis of the range.
+            dim_end: The identifier of the last axis of the range.
+
+        """
+        super().__init__()
+        self.dim_start = dim_start
+        self.dim_end = dim_end
+
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor]:
+        """Remove a range of contiguous axes from an array.
+
+        Args:
+            x: An array.
+
+        Returns:
+            A sequence of arrays. The arrays have the following semantics:
+                * the array whose axes have been removed.
+
+        """
+        ys = torch.flatten(x, start_dim=self.dim_start, end_dim=self.dim_end),
+        return ys
+
+
 class Split(nn.Module):
     """Split an array into two blocks along a given axis."""
 

@@ -4,14 +4,14 @@ import torch
 import torch.nn as nn
 
 
-class Linear(nn.Linear):  # TODO: factor out bias
-    """Apply an affine transformation to an input array."""
+class BatchNorm2d(nn.BatchNorm2d):
+    """Apply a batch-normalization transformation to an input array with two spatial dimensions."""
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor]:
-        """Apply an affine transformation to an input array.
+        """Apply a batch-normalization transformation to an input array with two spatial dimensions.
 
         Args:
-            x: An array.
+            x: An input array.
 
         Returns:
             A sequence of arrays. The arrays have the following semantics:
