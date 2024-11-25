@@ -2,10 +2,9 @@ from typing import Tuple
 
 import torch
 import torch.fx as fx
-import torch.nn as nn
 
+import fx_ir.editor as editor
 import fx_ir.operators as operators
-import fx_ir.validator as validator
 
 
 def _create_model(n_input: int, n_hidden: int, n_output: int) -> fx.GraphModule:
@@ -20,34 +19,20 @@ def _create_model(n_input: int, n_hidden: int, n_output: int) -> fx.GraphModule:
         The model of a perceptron.
 
     """
-    # define the `Graph`
-    graph = fx.Graph()
-    inputs = graph.placeholder("inputs")
-    inputs_0 = graph.call_module("inputs_0", (inputs,))
-    linear1 = graph.call_module("linear1",(inputs_0,))
-    linear1_0 = graph.call_module("linear1_0", (linear1,))
-    relu1 = graph.call_module("relu1", (linear1_0,))
-    relu1_0 = graph.call_module("relu1_0", (relu1,))
-    linear2 = graph.call_module("linear2", (relu1_0,))
-    linear2_0 = graph.call_module("linear2_0", (linear2,))
-    outputs = graph.output((linear2_0,))
-    # define the `Module`
-    module = nn.Module()
-    module.register_module("inputs_0", operators.Array(0))
-    module.register_module("linear1", operators.Linear(n_input, n_hidden))
-    module.register_module("linear1_0", operators.Array(0))
-    module.register_module("relu1", operators.ReLU())
-    module.register_module("relu1_0", operators.Array(0))
-    module.register_module("linear2", operators.Linear(n_hidden, n_output))
-    module.register_module("linear2_0", operators.Array(0))
+    # create the model
+    editor_ = editor.Editor(debug=False)
+    i0 = editor_.add_input()
+    l1, (l1_0,) = editor_.add_operation(editor_.output, "linear1", operators.Linear(n_input, n_hidden), {(0, None): i0}, {})
+    r1, (r1_0,) = editor_.add_operation(editor_.output, "relu1", operators.ReLU(), {(0, None): l1_0}, {})
+    l2, (l2_0,) = editor_.add_operation(editor_.output, "linear2", operators.Linear(n_hidden, n_output), {(0, None): r1_0}, {})
+    editor_.add_output(l2_0)
+    graph_module = editor_.finalize()
     # set weights and biases to one
     with torch.no_grad():
-        for m in module.children():
-            if isinstance(m, operators.Linear):
-                m.weight.fill_(1)
-                m.bias.fill_(1)
-    # create the `GraphModule`
-    graph_module = fx.GraphModule(root=module, graph=graph)
+        for module in graph_module.children():
+            if isinstance(module, operators.Linear):
+                module.weight.fill_(1)
+                module.bias.fill_(1)
     return graph_module
 
 
@@ -103,7 +88,6 @@ def main():
     """Create an FX IR model with a collection of inputs, validate the model, then apply it to the inputs."""
     batch_size, n_input, n_hidden, n_output = 2**4, 2**2, 2**3, 2**1
     model, inputs = create_model_and_inputs(batch_size, n_input, n_hidden, n_output)
-    validator.VALIDATOR.validate(model)
     actual_outputs = model(inputs)
     expected_outputs = _create_expected_outputs(batch_size, n_input, n_hidden, n_output)
     assert all(torch.equal(a, e) for a, e in zip(actual_outputs, expected_outputs))

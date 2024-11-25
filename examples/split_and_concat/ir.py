@@ -2,10 +2,9 @@ from typing import Tuple
 
 import torch
 import torch.fx as fx
-import torch.nn as nn
 
+import fx_ir.editor as editor
 import fx_ir.operators as operators
-import fx_ir.validator as validator
 
 
 def _create_model(block_sizes: Tuple[int, int]) -> fx.GraphModule:
@@ -18,26 +17,12 @@ def _create_model(block_sizes: Tuple[int, int]) -> fx.GraphModule:
         The model swapping two blocks of an array.
 
     """
-    # define the `Graph`
-    graph = fx.Graph()
-    inputs = graph.placeholder("inputs")
-    inputs_0 = graph.call_module("inputs_0", (inputs,))
-    split = graph.call_module("split",(inputs_0,))
-    split_0 = graph.call_module("split_0", (split,))
-    split_1 = graph.call_module("split_1", (split,))
-    concat = graph.call_module("concat", (split_1, split_0))
-    concat_0 = graph.call_module("concat_0", (concat,))
-    outputs = graph.output((concat_0,))
-    # define the `Module`
-    module = nn.Module()
-    module.register_module("inputs_0", operators.Array(0))
-    module.register_module("split", operators.Split(0, block_sizes))
-    module.register_module("split_0", operators.Array(0))
-    module.register_module("split_1", operators.Array(1))
-    module.register_module("concat", operators.Concat(0))
-    module.register_module("concat_0", operators.Array(0))
-    # create the `GraphModule`
-    graph_module = fx.GraphModule(root=module, graph=graph)
+    editor_ = editor.Editor(debug=False)
+    i0 = editor_.add_input()
+    s, (s0, s1) = editor_.add_operation(editor_.output, "split", operators.Split(0, block_sizes), {(0, None): i0}, {})
+    c, (c0,) = editor_.add_operation(editor_.output, "concat", operators.Concat(0), {(0, None): s1, (1, None): s0}, {})
+    editor_.add_output(c0)
+    graph_module = editor_.finalize()
     return graph_module
 
 
@@ -88,7 +73,6 @@ def main():
     """Create an FX IR model with a collection of inputs, validate the model, then apply it to the inputs."""
     block_sizes = (2**3, 2**4)
     model, inputs = create_model_and_inputs(block_sizes)
-    validator.VALIDATOR.validate(model)
     actual_outputs = model(inputs)
     expected_outputs = _create_expected_outputs(block_sizes)
     assert all(torch.equal(a, e) for a, e in zip(actual_outputs, expected_outputs))
