@@ -31,6 +31,17 @@ class FXConverter:
         self.editor.toggle()
 
     def convert(self, graph_module: fx.GraphModule) -> fx.GraphModule:
+        # TODO: The first step would be to traverse the `Graph` and determine, for each "arg", whether it is a
+        #       `Tensor`, a tuple of `Tensor` (as in the case of outputs of the `split` function), or something else.
+        #       This requirement originates from the handling of the `split` function, which produces a tuple of
+        #       `Tensor`s and whose individual `Tensor`s are accessed using the `getitem` function (from the `operator`
+        #       standard library package). The outputs of such `getitem` calls are individual `Tensor`s, which are
+        #       already available once the `split` function has been converted, and don't need to be created.
+
+        # TODO: The second step is to disambiguate those `args` that are containers of `Node`s, each `Node` representing
+        #       a statement that produces a single `Tensor`. This requirement originates from the handling of the `cat`
+        #       function, which accepts a container of `Tensor`s as its first argument.
+
         tgt_op_type_to_count: collections.Counter[Type[operators.OperatorT]] = collections.Counter()
 
         src_in_node_to_tgt_in_node: Dict[_SrcInput, _TgtInput] = {}
